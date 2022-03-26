@@ -1,0 +1,30 @@
+.main
+  push "A"
+
+.loop
+  # Print letter to the screen
+  duplicate
+  out
+
+  # Check whether we've reached Z yet
+  duplicate
+  push "Z"
+  subtract
+
+  # If we have, we're done
+  push done
+  betz
+
+  # Advance to the next letter and loop
+  push 1
+  add
+  push loop
+  jump
+
+.done
+  # Program ends
+  discard
+  push "\n"
+  out
+  halt
+

@@ -1,0 +1,33 @@
+.counter 10
+
+.main
+  push "H"
+  out
+  push "e"
+  out
+  push "l"
+  out
+  push "l"
+  out
+  push "o"
+  out
+  push "\n"
+  out
+
+  # subtract 1 from value at label .counter
+  push counter
+  read
+  push 1
+  subtract
+
+  # write new value back to .counter, and keep the value in the stack
+  duplicate
+  push counter
+  write
+
+  # jump back to the start if we're not at 0 yet
+  push main
+  bgtz
+
+  # done
+  halt

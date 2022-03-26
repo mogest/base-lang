@@ -1,0 +1,117 @@
+.fn_print_number
+    # set up number_buffer_ptr to point to number_buffer
+    push number_buffer
+    push number_buffer_ptr
+    write
+
+  .dec_next_digit
+    # set the divisor to 0
+    push 0
+    push number_divisor
+    write
+
+    # let's start
+    push dec_start
+    jump
+
+  .dec_loop
+    # add 1 to number_divisor
+    push number_divisor
+    read
+    push 1
+    add
+    push number_divisor
+    write
+
+  .dec_start
+    # subtract 10
+    push 10
+    subtract
+
+    # if it's still positive, back to dec_loop
+    duplicate
+    push dec_loop
+    bgtz
+
+    # if it's zero (i.e. not less than zero), we're done, go to dec_post_add
+    duplicate
+    push dec_post_add
+    betz
+
+    # otherwise add 10 so it goes back to a positive number
+    push 10
+    add
+
+  .dec_post_add
+    # save the modulo + 48 to the location pointed to by our pointer, it's removed from the stack here
+    push 48
+    add
+    push number_buffer_ptr
+    read
+    write
+
+    # number_divisor becomes our new number
+    push number_divisor
+    read
+
+    # increment the pointer by 1
+    push number_buffer_ptr
+    read
+    push 1
+    add
+    push number_buffer_ptr
+    write
+
+    # process the next digit if we're not at 0
+    duplicate
+    push dec_next_digit
+    bgtz
+
+    # print it out!
+
+    # decrement number_buffer_ptr
+  .next_number_out
+    push number_buffer_ptr
+    read
+    push 1
+    subtract
+    duplicate
+    push number_buffer_ptr
+    write
+
+    read
+    out
+
+    push number_buffer_ptr
+    read
+    push number_buffer
+    subtract
+    push next_number_out
+    bgtz
+
+    # all done :)
+    discard
+
+    # return ip is on stack
+    jump
+
+
+.main
+  # set return address
+  push ip
+  push 10
+  add
+
+  # call function
+  push 472
+  push fn_print_number
+  jump
+
+  # output newline
+  push "\n"
+  out
+  halt
+
+.number_divisor 0
+.number_buffer_ptr 0
+.number_buffer 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

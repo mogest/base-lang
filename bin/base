@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require_relative "../lib/base"
+
+options = {}
+OptionParser.new do |parser|
+  parser.banner = "Usage: base [options] filename.base"
+
+  parser.on("-d", "--debug", "Start debugger immediately") do
+    options[:debug] = true
+  end
+
+  parser.on("-c", "--compile", "Compile only and output program code") do
+    options[:compile] = true
+  end
+
+  parser.on("-h", "--help", "Prints this help") do
+    puts parser
+    exit 1
+  end
+end.parse!
+
+if ARGV.length != 1
+  $stderr.puts("one source file must be specified")
+  exit 1
+end
+
+begin
+  program = Base::Compiler.new.compile(ARGV[0])
+
+  if options[:compile]
+    puts program.join(",")
+  else
+    Base::VM.new(program, debug: options[:debug] || false).run
+  end
+
+rescue Base::Compiler::Error, Base::VM::Error => e
+  $stderr.puts("error: #{e.message}")
+end

@@ -1,0 +1,60 @@
+.jsr_location 0
+macro jsr push jsr_location, write, push ip, push 9, add, push jsr_location, read, jump
+
+.main
+push 10 # times around the loop
+push counter
+write
+
+.loop
+push message
+push index
+write
+
+push subroutine
+jsr
+
+.inner
+push index
+read
+read
+duplicate
+push done
+betz
+out
+push index
+read
+push 1
+add
+push index
+write
+push inner
+jump
+
+.done
+discard
+push counter
+read
+push 1
+subtract
+duplicate
+push counter
+write
+push loop
+bgtz
+
+halt
+
+.subroutine
+push "h"
+out
+push "i"
+out
+push "\n"
+out
+jump
+
+
+.counter 0
+.index 0
+.message "Hello!\n", 0
