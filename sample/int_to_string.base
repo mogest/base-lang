@@ -1,57 +1,35 @@
 .fn_print_number
-    # set up number_buffer_ptr to point to number_buffer
+    # number_buffer_ptr points to number_buffer
     push number_buffer
     push number_buffer_ptr
     write
 
   .dec_next_digit
-    # set the divisor to 0
-    push 0
-    push number_divisor
-    write
+    duplicate
 
-    # let's start
-    push dec_start
-    jump
-
-  .dec_loop
-    # add 1 to number_divisor
-    push number_divisor
-    read
-    push 1
-    add
-    push number_divisor
-    write
-
-  .dec_start
-    # subtract 10
+    # divide by 10
     push 10
+    divide
+
+    # write the result for next loop
+    duplicate
+    push next_number
+    write
+
+    # find the modulo
+    push 10
+    multiply
     subtract
 
-    # if it's still positive, back to dec_loop
-    duplicate
-    push dec_loop
-    bgtz
-
-    # if it's zero (i.e. not less than zero), we're done, go to dec_post_add
-    duplicate
-    push dec_post_add
-    betz
-
-    # otherwise add 10 so it goes back to a positive number
-    push 10
-    add
-
-  .dec_post_add
-    # save the modulo + 48 to the location pointed to by our pointer, it's removed from the stack here
+    # convert to ASCII
     push 48
     add
     push number_buffer_ptr
     read
     write
 
-    # number_divisor becomes our new number
-    push number_divisor
+    # next_number becomes our new number
+    push next_number
     read
 
     # increment the pointer by 1
@@ -67,10 +45,8 @@
     push dec_next_digit
     bgtz
 
-    # print it out!
-
-    # decrement number_buffer_ptr
-  .next_number_out
+  .print_next_digit
+    # move the ptr back 1
     push number_buffer_ptr
     read
     push 1
@@ -79,14 +55,16 @@
     push number_buffer_ptr
     write
 
+    # read the ptr and print it out
     read
     out
 
+    # if we're not back at the start yet, loop
     push number_buffer_ptr
     read
     push number_buffer
     subtract
-    push next_number_out
+    push print_next_digit
     bgtz
 
     # all done :)
@@ -112,6 +90,6 @@
   out
   halt
 
-.number_divisor 0
+.next_number 0
 .number_buffer_ptr 0
 .number_buffer 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

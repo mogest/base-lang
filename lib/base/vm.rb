@@ -6,7 +6,7 @@ module Base
 
     attr_reader :ip, :stack, :memory
 
-    COMMANDS = %w(debug push discard duplicate write read add subtract jump bltz bgtz betz bnetz out halt)
+    COMMANDS = %w(debug push discard duplicate write read add subtract multiply divide jump bltz bgtz betz bnetz out halt)
 
     def initialize(program, debug: false)
       @ip = program.shift
@@ -71,6 +71,15 @@ module Base
         a = stack.pop
         b = stack.pop
         stack.push(b - a)
+      when "multiply"
+        a = stack.pop
+        b = stack.pop
+        stack.push(b * a)
+      when "divide"
+        a = stack.pop
+        b = stack.pop
+        raise Error, "divide by 0" if a == 0
+        stack.push(b / a)
 
       when "jump"
         @ip = stack.pop - 1

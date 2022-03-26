@@ -63,13 +63,15 @@ write | 4 | -- | writes the second entry on the stack to the memory location at 
 read | 5 | -+ | reads from the memory location on the stack and puts the result on the stack
 add | 6 | --+ | adds the top two entries on the stack and puts the result on the stack
 subtract | 7 | --+ | subtracts the top entry on the stack from the second entry on the stack and puts the result on the stack
-jump | 8 | - | jumps to the location indicated by the top entry on the stack
-bltz | 9 | -- | jumps to the location indicated by the top entry on the stack if the second entry on the stack is less than 0
-bgtz | 10 | -- | jumps to the location indicated by the top entry on the stack if the second entry on the stack is greater than 0
-betz | 11 | -- | jumps to the location indicated by the top entry on the stack if the second entry on the stack is equal to 0
-bnetz | 12 | -- | jumps to the location indicated by the top entry on the stack if the second entry on the stack is not equal to 0
-out | 13 | - | outputs the top entry on the stack to stdout, interpreted as a unicode character
-halt | 14 | | halts the program
+multiply | 8 | --+ | multiplies the top two entries on the stack and puts the result on the stack
+divide | 9 | --+ | divides the top entry on the stack from the second entry on the stack and puts the integer result on the stack
+jump | 10 | - | jumps to the location indicated by the top entry on the stack
+bltz | 11 | -- | jumps to the location indicated by the top entry on the stack if the second entry on the stack is less than 0
+bgtz | 12 | -- | jumps to the location indicated by the top entry on the stack if the second entry on the stack is greater than 0
+betz | 13 | -- | jumps to the location indicated by the top entry on the stack if the second entry on the stack is equal to 0
+bnetz | 14 | -- | jumps to the location indicated by the top entry on the stack if the second entry on the stack is not equal to 0
+out | 15 | - | outputs the top entry on the stack to stdout, interpreted as a unicode character
+halt | 16 | | halts the program
 
 ## Compiler
 
