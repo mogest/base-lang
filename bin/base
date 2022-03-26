@@ -5,7 +5,12 @@ require_relative "../lib/base"
 
 options = {}
 OptionParser.new do |parser|
+  parser.version = Base::VERSION
   parser.banner = "Usage: base [options] filename.base"
+
+  parser.on("-b", "--bytecode", "Input file is compiled bytecode") do
+    options[:bytecode] = true
+  end
 
   parser.on("-d", "--debug", "Start debugger immediately") do
     options[:debug] = true
@@ -19,6 +24,11 @@ OptionParser.new do |parser|
     puts parser
     exit 1
   end
+
+  parser.on_tail("--version", "Show version") do
+    puts "base #{Base::VERSION}"
+    exit
+  end
 end.parse!
 
 if ARGV.length != 1
@@ -26,11 +36,26 @@ if ARGV.length != 1
   exit 1
 end
 
+def file_or_stdin(file)
+  if file == "-"
+    $stdin.read
+  else
+    File.read(file)
+  end
+end
+
 begin
-  program = Base::Compiler.new.compile(ARGV[0])
+  program = Base::Program.new
+
+  if options[:bytecode]
+    program.decode(file_or_stdin(ARGV[0]))
+  else
+    compiler = Base::Compiler.new(program)
+    compiler.compile(file_or_stdin(ARGV[0]))
+  end
 
   if options[:compile]
-    puts program.join(",")
+    print program.encode
   else
     Base::VM.new(program, debug: options[:debug] || false).run
   end

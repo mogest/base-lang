@@ -2,22 +2,25 @@ module Base
   class Compiler
     Error = Class.new(StandardError)
 
-    def initialize
+    def initialize(program)
+      @program = program
       @parsing = []
-      @memory = []
       @labels = {}
       @macros = {}
     end
 
-    def compile(file)
-      lines = File.read(file).split("\n")
+    def compile(data)
+      lines = data.split("\n")
       parse(lines)
-
-      main = @labels["main"] || 0
-      [main] + @memory
+      @program.start_location = @labels["main"] || 0
+      true
     end
 
     private
+
+    def memory
+      @program.memory
+    end
 
     def parse(lines)
       lines.each.with_index do |line, index|
@@ -30,7 +33,7 @@ module Base
 
       @parsing.each do |index, line_number|
         begin
-          @memory[index] = parse_arg(@memory[index], index)
+          memory[index] = parse_arg(memory[index], index)
         rescue Error => e
           raise Error, "#{e.message} on line #{line_number}"
         end
@@ -46,12 +49,12 @@ module Base
       when /\A\.([a-z_][a-z0-9_]*)(?:\s+(.+))?\z/i
         raise Error, "label already defined" if @labels[$1]
         raise Error, "can't use 'ip' as a label name" if $1 == 'ip'
-        @labels[$1] = @memory.length
-        @memory += parse_static($2) if $2
+        @labels[$1] = memory.length
+        memory.concat(parse_static($2)) if $2
 
       when /\Apush\s+(.+)\z/
-        @memory += [VM::COMMANDS.index("push"), $1]
-        @parsing << [@memory.length - 1, number]
+        memory.concat [VM::COMMANDS.index("push"), $1]
+        @parsing << [memory.length - 1, number]
 
       when /\Amacro\s+(\S+)\s+(.+)/
         raise Error, "label already defined" if @macros[$1]
@@ -60,7 +63,7 @@ module Base
 
       else
         if op_code = VM::COMMANDS.index(line)
-          @memory << op_code
+          memory << op_code
         elsif macro = @macros[line]
           if macro_entry.include?(macro)
             raise Error, "recursive call to macro #{macro}"

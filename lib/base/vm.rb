@@ -9,8 +9,8 @@ module Base
     COMMANDS = %w(debug push discard duplicate write read add subtract multiply divide jump bltz bgtz betz bnetz out halt)
 
     def initialize(program, debug: false)
-      @ip = program.shift
-      @memory = program
+      @ip = program.start_location
+      @memory = program.memory
       @debug = debug
       @stack = Stack.new
     end

@@ -1,3 +1,5 @@
+require_relative 'base/version'
+require_relative 'base/program'
 require_relative 'base/stack'
 require_relative 'base/compiler'
 require_relative 'base/vm'
