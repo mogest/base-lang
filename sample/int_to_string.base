@@ -22,7 +22,7 @@
     subtract
 
     # convert to ASCII
-    push 48
+    push "0"
     add
     push number_buffer_ptr
     read
@@ -92,4 +92,4 @@
 
 .next_number 0
 .number_buffer_ptr 0
-.number_buffer 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+.number_buffer 0 # following memory used for unsized buffer
